@@ -17,9 +17,9 @@ class SourceApi @Inject constructor(private val networkClient: NetworkClient) : 
     fun getAll(): Single<SourcesResponse> {
         return Single.create<SourcesResponse> { emitter ->
             try {
-                val response = retrieveAllSources()
-                error { Gson().toJson(response) }
-                response.let { emitter.onSuccess(it) }
+                retrieveAllSources()
+                        .also { Gson().toJson(it) }
+                        .apply { emitter.onSuccess(this) }
 
             } catch (e: Exception) {
                 emitter.onError(e)
@@ -32,12 +32,13 @@ class SourceApi @Inject constructor(private val networkClient: NetworkClient) : 
 
         try
         {
-            networkClient.cancelByTag(TAG)
-            error { "url : "+NewsUrl.getSources() }
-            return networkClient.withUrl(NewsUrl.getSources())
-                    .initAs(SourcesResponse::class.java)
-                    .setTag(TAG)
-                    .syncFuture
+            return with(networkClient){
+                cancelByTag(TAG)
+                withUrl(NewsUrl.getSources())
+                        .initAs(SourcesResponse::class.java)
+                        .setTag(TAG)
+                        .syncFuture
+            }
         } catch (e: Exception) {
             throw e
         }

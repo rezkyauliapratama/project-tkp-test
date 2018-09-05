@@ -4,6 +4,7 @@ import android.rezkyauliapratama.com.tokopedia_newsapp.base.BaseApplication
 import android.rezkyauliapratama.com.tokopedia_newsapp.data.network.ApiRepository
 import android.rezkyauliapratama.com.tokopedia_newsapp.di.viewmodel.ViewModelFactory
 import android.rezkyauliapratama.com.tokopedia_newsapp.di.viewmodel.ViewModelModule
+import android.rezkyauliapratama.com.tokopedia_newsapp.util.TimeUtility
 import dagger.Component
 import javax.inject.Singleton
 
@@ -14,6 +15,7 @@ interface ApplicationComponent {
 
     fun getApiRepository() : ApiRepository
     fun getViewModelFactory() : ViewModelFactory
+    fun getTimeUtils(): TimeUtility
 
 
 }
