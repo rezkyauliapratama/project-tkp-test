@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Tokopedia-NewsApp</string>
+    <string name="format_category">Category %s</string>
+    <string name="format_language">Language %s</string>
+
+</resources>

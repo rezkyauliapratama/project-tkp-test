@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextStyle.Display2" parent="TextAppearance.AppCompat.Display2">
+
+    </style>
+
+    <style name="TextStyle.Medium" parent="TextAppearance.AppCompat.Medium">
+
+    </style>
+
+    <style name="TextStyle.Small" parent="TextAppearance.AppCompat.Small">
+
+    </style>
+
+</resources>

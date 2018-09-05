@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+   >
+
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="source"
+            type="android.rezkyauliapratama.com.tokopedia_newsapp.data.datamodel.Source" />
+
+    </data>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="2dp"
+        app:cardCornerRadius="@dimen/margin_small"
+        app:cardUseCompatPadding="true"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.app.infideap.stylishwidget.view.ATextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/margin_small"
+                android:text="@{source.name}"
+                android:textColor="@color/primaryTextColor"
+                android:textAppearance="@style/TextStyle.Medium"
+                />
+
+            <com.app.infideap.stylishwidget.view.ATextView
+                android:id="@+id/tv_url"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/margin_small"
+                android:layout_below="@id/tv_name"
+                android:text="@{source.url}"
+                android:textColor="@color/primaryTextColor"
+                android:textAppearance="@style/TextStyle.Medium"
+                />
+
+            <com.app.infideap.stylishwidget.view.ATextView
+                android:id="@+id/tv_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/margin_small"
+                android:layout_below="@id/tv_url"
+                android:text="@{@string/format_category(source.category)}"
+                android:textColor="@color/primaryTextColor"
+                android:textAppearance="@style/TextStyle.Small"
+                />
+
+            <com.app.infideap.stylishwidget.view.ATextView
+                android:id="@+id/tv_language"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/margin_small"
+                android:layout_below="@id/tv_category"
+                android:text="@{@string/format_language(source.language)}"
+                android:textColor="@color/primaryTextColor"
+                android:textAppearance="@style/TextStyle.Small"
+                />
+
+
+            <com.app.infideap.stylishwidget.view.ATextView
+                android:id="@+id/tv_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/margin_small"
+                android:layout_below="@id/tv_language"
+                android:text="@{source.description}"
+                android:textColor="@color/primaryTextColor"
+                android:textAppearance="@style/TextStyle.Small"
+                />
+
+
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</layout>

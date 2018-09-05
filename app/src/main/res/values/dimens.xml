@@ -1,0 +1,8 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+
+    <dimen name="margin_small">6dp</dimen>
+    <dimen name="margin_normal">12dp</dimen>
+
+    <dimen name="size_image_92dp">92dp</dimen>
+</resources>
