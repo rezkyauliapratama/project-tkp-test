@@ -1,5 +1,6 @@
 package android.rezkyauliapratama.com.tokopedia_newsapp.data.network
 
+import android.rezkyauliapratama.com.tokopedia_newsapp.data.network.api.ArticleApi
 import android.rezkyauliapratama.com.tokopedia_newsapp.data.network.api.SourceApi
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -10,5 +11,8 @@ class ApiRepository @Inject constructor(){
     @Inject
     lateinit var source: SourceApi
 
+
+    @Inject
+    lateinit var article: ArticleApi
 
 }

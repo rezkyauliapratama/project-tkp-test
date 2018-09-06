@@ -6,6 +6,7 @@
 
 
     <color name="primaryTextColor">#000000</color>
+    <color name="secondaryTextColor">@color/colorGrey_500</color>
     <color name="background_material_white">#ffffff</color>
     <color name="foreground_light">#a1a1a1</color>
 </resources>

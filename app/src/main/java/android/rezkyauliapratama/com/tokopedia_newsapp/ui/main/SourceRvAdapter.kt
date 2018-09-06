@@ -46,7 +46,7 @@ class SourceRvAdapter(private val lifecycle:LifecycleOwner,private val mainViewM
             binding.setVariable(BR.source,source)
             binding.executePendingBindings()
             binding.root.setOnClickListener{
-                clickListener(source.id)
+                clickListener(source.url.run { if(startsWith("www.")) substring(4) else this })
             }
         }
     }

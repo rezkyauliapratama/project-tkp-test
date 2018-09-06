@@ -4,5 +4,6 @@
     <dimen name="margin_small">6dp</dimen>
     <dimen name="margin_normal">12dp</dimen>
 
-    <dimen name="size_image_92dp">92dp</dimen>
+    <dimen name="width_image_list_article">92dp</dimen>
+    <dimen name="height_image_list_article">69dp</dimen>
 </resources>
