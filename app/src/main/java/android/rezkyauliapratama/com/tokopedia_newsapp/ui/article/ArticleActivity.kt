@@ -7,10 +7,13 @@ import android.rezkyauliapratama.com.tokopedia_newsapp.BR
 import android.rezkyauliapratama.com.tokopedia_newsapp.R
 import android.rezkyauliapratama.com.tokopedia_newsapp.base.BaseActivity
 import android.rezkyauliapratama.com.tokopedia_newsapp.databinding.ActivityArticleBinding
+import android.rezkyauliapratama.com.tokopedia_newsapp.ui.detail.DetailActivity
 import android.rezkyauliapratama.com.tokopedia_newsapp.ui.state.UiStatus
 import android.rezkyauliapratama.com.tokopedia_newsapp.util.TimeUtility
 import android.support.v7.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_article.*
+import org.jetbrains.anko.ctx
+import org.jetbrains.anko.startActivity
 import javax.inject.Inject
 
 class ArticleActivity : BaseActivity<ActivityArticleBinding,ArticleViewModel>(){
@@ -31,7 +34,7 @@ class ArticleActivity : BaseActivity<ActivityArticleBinding,ArticleViewModel>(){
     }
 
     override fun initBindingVariable(): Int {
-        return BR.article
+        return BR.viewModel
     }
 
     override fun inject() {
@@ -77,7 +80,7 @@ class ArticleActivity : BaseActivity<ActivityArticleBinding,ArticleViewModel>(){
 
     }
 
-    private fun eventClicked(id: String) {
-
+    private fun eventClicked(url: String) {
+        ctx.startActivity<DetailActivity>("url".to(url))
     }
 }

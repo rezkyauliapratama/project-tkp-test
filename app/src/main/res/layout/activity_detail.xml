@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+    <import type="android.view.View" />
+    <variable
+        name="viewModel"
+        type="android.rezkyauliapratama.com.tokopedia_newsapp.ui.detail.DetailViewModel" />
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        android:layout_height="match_parent" android:paddingLeft="@dimen/margin_normal"
+        android:paddingRight="@dimen/margin_normal"
+        android:paddingTop="@dimen/margin_normal"
+        android:paddingBottom="@dimen/margin_normal">
+
+        <WebView
+            android:id="@+id/webView"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </RelativeLayout>
+</layout>
