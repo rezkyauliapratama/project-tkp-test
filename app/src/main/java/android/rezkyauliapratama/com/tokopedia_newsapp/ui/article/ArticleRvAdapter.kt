@@ -14,13 +14,13 @@ import android.view.ViewGroup
 import com.squareup.picasso.Picasso
 
 class ArticleRvAdapter(private val lifecycle: LifecycleOwner, private val articleViewModel: ArticleViewModel,
-                       private val timeUtility: TimeUtility, private val clickListener : (String) -> Unit) : BaseAdapter() {
-
+                       private val timeUtility: TimeUtility, private val clickListener : (String) -> Unit) : RecyclerView.Adapter<ArticleRvAdapter.ViewHolder>() {
 
     val listItem : MutableList<Article> = mutableListOf()
 
     init {
         articleViewModel.articleResponseLD.observe(lifecycle, Observer {
+            listItem.clear()
             it?.apply { listItem.addAll(this) }
             notifyDataSetChanged()
         })
@@ -32,12 +32,11 @@ class ArticleRvAdapter(private val lifecycle: LifecycleOwner, private val articl
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is ViewHolder) run { holder.bindItem(listItem[position],timeUtility,clickListener)
-        }
-    }
-
     override fun getItemCount() = listItem.size
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bindItem(listItem[position],timeUtility,clickListener)
+    }
 
     class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         private var binding: ListItemArticleBinding = ListItemArticleBinding.bind(itemView)

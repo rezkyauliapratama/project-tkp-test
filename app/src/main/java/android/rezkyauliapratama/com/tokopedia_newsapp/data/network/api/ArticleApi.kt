@@ -5,6 +5,7 @@ import android.rezkyauliapratama.com.tokopedia_newsapp.data.network.NewsUrl
 import android.rezkyauliapratama.com.tokopedia_newsapp.util.TimeUtility
 import com.google.gson.Gson
 import com.rezkyaulia.android.light_optimization_data.NetworkClient
+import io.reactivex.ObservableSource
 import io.reactivex.Single
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
@@ -15,10 +16,10 @@ class ArticleApi @Inject constructor(private val networkClient: NetworkClient, p
     val TAG : String  = ArticleApi::class.java.simpleName
 
 
-    fun getAllArticles(source: String, startDate: Date, endDate: Date) : Single<ArticleResponse>{
+    fun getAllArticles(source: String) : Single<ArticleResponse>{
         return Single.create<ArticleResponse> { emitter ->
             try {
-                retrieveAllArticles(source,startDate,endDate)
+                retrieveAllArticles(source)
                         .also { Gson().toJson(it) }
                         .apply { emitter.onSuccess(this) }
 
@@ -29,18 +30,47 @@ class ArticleApi @Inject constructor(private val networkClient: NetworkClient, p
 
     }
 
-    private fun retrieveAllArticles(source : String, startDate: Date, endDate: Date) : ArticleResponse
+    fun getAllArticles(source: String, q : String) : ObservableSource<ArticleResponse>{
+        return ObservableSource {
+            emitter ->
+            try {
+                retrieveAllArticles(source,q)
+                        .also { Gson().toJson(it) }
+                        .apply { emitter.onNext(this) }
+
+            } catch (e: Exception) {
+                emitter.onError(e)
+            }
+        }
+
+    }
+
+    private fun retrieveAllArticles(source : String) : ArticleResponse
     {
         try
         {
-            error { NewsUrl.getArticles(source, timeUtility.convertDateToString(startDate),timeUtility.convertDateToString(endDate)) }
             return with(networkClient){
                 cancelByTag(TAG)
-                withUrl(NewsUrl.getArticles(source,
-                        timeUtility.convertDateToString(startDate),
-                        timeUtility.convertDateToString(endDate)))
+                withUrl(NewsUrl.getArticles(source))
                         .initAs(ArticleResponse::class.java)
                         .setTag(TAG)
+                        .syncFuture
+            }
+        } catch (e: Exception) {
+            throw e
+        }
+
+    }
+
+    private fun retrieveAllArticles(source : String, q : String) : ArticleResponse
+    {
+        try
+        {
+            return with(networkClient){
+                cancelByTag(TAG+"query")
+                withUrl(NewsUrl.getArticles(source,q))
+                        .initAs(ArticleResponse::class.java)
+                        .setTag(TAG+"query")
                         .syncFuture
             }
         } catch (e: Exception) {

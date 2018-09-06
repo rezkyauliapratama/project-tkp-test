@@ -11,6 +11,8 @@ import android.rezkyauliapratama.com.tokopedia_newsapp.ui.detail.DetailActivity
 import android.rezkyauliapratama.com.tokopedia_newsapp.ui.state.UiStatus
 import android.rezkyauliapratama.com.tokopedia_newsapp.util.TimeUtility
 import android.support.v7.widget.LinearLayoutManager
+import android.text.Editable
+import android.text.TextWatcher
 import kotlinx.android.synthetic.main.activity_article.*
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.startActivity
@@ -59,6 +61,18 @@ class ArticleActivity : BaseActivity<ActivityArticleBinding,ArticleViewModel>(){
         swipeRefreshLayout.setOnRefreshListener {
             viewModel.retrieveData(id)
         }
+
+        et_search.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.search(s.toString())
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
     }
 
     private fun initObserver() {
@@ -79,11 +93,6 @@ class ArticleActivity : BaseActivity<ActivityArticleBinding,ArticleViewModel>(){
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
-        adapter.setOnLoadMoreListener(object : OnLoadMoreListener {
-            override fun onLoadMore() {
-                viewModel.retrieveData(id)
-            }
-        })
     }
 
     private fun eventClicked(url: String) {
