@@ -47,6 +47,7 @@ class ArticleActivity : BaseActivity<ActivityArticleBinding,ArticleViewModel>(){
 
         id = intent.getStringExtra("id")
 
+        viewModel.retrieveData(id)
 
         initView()
         initRv()
@@ -78,6 +79,11 @@ class ArticleActivity : BaseActivity<ActivityArticleBinding,ArticleViewModel>(){
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
+        adapter.setOnLoadMoreListener(object : OnLoadMoreListener {
+            override fun onLoadMore() {
+                viewModel.retrieveData(id)
+            }
+        })
     }
 
     private fun eventClicked(url: String) {

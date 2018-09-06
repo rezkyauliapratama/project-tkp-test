@@ -15,10 +15,10 @@ class ArticleApi @Inject constructor(private val networkClient: NetworkClient, p
     val TAG : String  = ArticleApi::class.java.simpleName
 
 
-    fun getAllArticles(source: String, date: Date) : Single<ArticleResponse>{
+    fun getAllArticles(source: String, startDate: Date, endDate: Date) : Single<ArticleResponse>{
         return Single.create<ArticleResponse> { emitter ->
             try {
-                retrieveAllArticles(source,date)
+                retrieveAllArticles(source,startDate,endDate)
                         .also { Gson().toJson(it) }
                         .apply { emitter.onSuccess(this) }
 
@@ -29,14 +29,16 @@ class ArticleApi @Inject constructor(private val networkClient: NetworkClient, p
 
     }
 
-    private fun retrieveAllArticles(source : String, date: Date) : ArticleResponse
+    private fun retrieveAllArticles(source : String, startDate: Date, endDate: Date) : ArticleResponse
     {
         try
         {
-            error { NewsUrl.getArticles(source, timeUtility.convertDateToString(date)) }
+            error { NewsUrl.getArticles(source, timeUtility.convertDateToString(startDate),timeUtility.convertDateToString(endDate)) }
             return with(networkClient){
                 cancelByTag(TAG)
-                withUrl(NewsUrl.getArticles(source, timeUtility.convertDateToString(date)))
+                withUrl(NewsUrl.getArticles(source,
+                        timeUtility.convertDateToString(startDate),
+                        timeUtility.convertDateToString(endDate)))
                         .initAs(ArticleResponse::class.java)
                         .setTag(TAG)
                         .syncFuture

@@ -19,13 +19,13 @@ object NewsUrl : AnkoLogger {
                 .toString()
     }
 
-    fun getArticles(source:String, dateString: String): String{
+    fun getArticles(source:String, start: String, end: String): String{
         return Uri.parse(BuildConfig.BASE_URL).buildUpon()
                 .appendPath("v2")
                 .appendPath("everything")
                 .appendQueryParameter("domains",source)
-                .appendQueryParameter("from",dateString)
-                .appendQueryParameter("to",dateString)
+                /*.appendQueryParameter("from",start)
+                .appendQueryParameter("to",end)*/
                 .appendQueryParameter("apiKey",BuildConfig.API_KEY)
                 .build()
                 .toString()
