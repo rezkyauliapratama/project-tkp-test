@@ -1,10 +1,13 @@
 package android.rezkyauliapratama.com.tokopedia_newsapp.ui.article
 
 import android.arch.lifecycle.MutableLiveData
+import android.os.Bundle
+import android.os.Parcelable
 import android.rezkyauliapratama.com.tokopedia_newsapp.base.BaseViewModel
 import android.rezkyauliapratama.com.tokopedia_newsapp.data.datamodel.Article
 import android.rezkyauliapratama.com.tokopedia_newsapp.data.network.ApiRepository
 import android.rezkyauliapratama.com.tokopedia_newsapp.data.network.api.ArticleApi
+import android.rezkyauliapratama.com.tokopedia_newsapp.data.network.api.SourceApi
 import android.rezkyauliapratama.com.tokopedia_newsapp.ui.state.UiStatus
 import android.rezkyauliapratama.com.tokopedia_newsapp.util.TimeUtility
 import android.text.Editable
@@ -17,18 +20,22 @@ import io.reactivex.functions.Predicate
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import org.jetbrains.anko.error
-import timber.log.Timber
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ArticleViewModel @Inject constructor(val apiRepository: ApiRepository, val timeUtility: TimeUtility) : BaseViewModel(){
     val articleResponseLD: MutableLiveData<List<Article>> = MutableLiveData()
+    val queryLD: MutableLiveData<String> = MutableLiveData()
+    val rvStateLD: MutableLiveData<Parcelable> = MutableLiveData()
     val uiStatusLD: MutableLiveData<UiStatus> = MutableLiveData()
 
     val subject = PublishSubject.create<String>()
-    lateinit var source: String
 
+    lateinit var sourceStr: String
+    var query = ""
+
+    val ARG1 : String = "ARG1"
+    val ARG2 : String = "ARG2"
 
     init {
         compositeDisposable.add(
@@ -39,7 +46,7 @@ class ArticleViewModel @Inject constructor(val apiRepository: ApiRepository, val
                         })
                         .distinctUntilChanged()
                         .switchMap(Function<String, ObservableSource<ArticleApi.ArticleResponse>> { it ->
-                            return@Function apiRepository.article.getAllArticles(source,it)
+                            return@Function apiRepository.article.getAllArticles(sourceStr,it)
 
                         })
                         .subscribeOn(Schedulers.io())
@@ -58,7 +65,7 @@ class ArticleViewModel @Inject constructor(val apiRepository: ApiRepository, val
     }
     fun retrieveData(source : String) {
 
-        this.source = source
+        this.sourceStr = source
 
         uiStatusLD.value = UiStatus.SHOW_LOADER
         compositeDisposable.add(apiRepository.article
@@ -84,8 +91,9 @@ class ArticleViewModel @Inject constructor(val apiRepository: ApiRepository, val
 
 
     fun search(s: String) {
+        query = s
         if (s.isEmpty()){
-            retrieveData(source)
+            retrieveData(sourceStr)
         }else{
             uiStatusLD.value = UiStatus.SHOW_LOADER
             subject.onNext(s)
@@ -93,5 +101,37 @@ class ArticleViewModel @Inject constructor(val apiRepository: ApiRepository, val
 
     }
 
+    fun saveToBundle(outState: Bundle) {
+        if (articleResponseLD.value != null) {
+            error { "put parcelable" }
+
+            outState.putParcelableArrayList(ARG1,  ArrayList(articleResponseLD.value))
+            outState.putString(ARG2,  query)
+        }
+    }
+
+    fun restoreFromBundle(savedInstanceState: Bundle?, source : String) {
+        error { "restore from bundle" }
+        this.sourceStr = source
+        if (savedInstanceState != null){
+            if (articleResponseLD.value == null) {
+                error { "articleResponseLD.value == null" }
+                if(savedInstanceState.containsKey(ARG1) && savedInstanceState.containsKey(ARG2) && savedInstanceState.containsKey("liststate")){
+                    val articles   = savedInstanceState.getParcelableArrayList<Article>(ARG1)
+                    query = savedInstanceState.getString(ARG2)
+
+                    error { "restore : "+ Gson().toJson(articles.toList()) }
+
+                    articleResponseLD.value = articles
+                    queryLD.value = query
+                    rvStateLD.value = savedInstanceState.getParcelable("liststate")
+
+                }
+            }
+        }else{
+            retrieveData(source)
+        }
+
+    }
 
 }

@@ -14,7 +14,7 @@ import android.view.ViewGroup
 import com.squareup.picasso.Picasso
 
 class ArticleRvAdapter(private val lifecycle: LifecycleOwner, private val articleViewModel: ArticleViewModel,
-                       private val timeUtility: TimeUtility, private val clickListener : (String) -> Unit) : RecyclerView.Adapter<ArticleRvAdapter.ViewHolder>() {
+                       private val timeUtility: TimeUtility, private val clickListener : (String?) -> Unit) : RecyclerView.Adapter<ArticleRvAdapter.ViewHolder>() {
 
     val listItem : MutableList<Article> = mutableListOf()
 
@@ -41,7 +41,7 @@ class ArticleRvAdapter(private val lifecycle: LifecycleOwner, private val articl
     class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         private var binding: ListItemArticleBinding = ListItemArticleBinding.bind(itemView)
 
-        fun bindItem(article: Article, timeUtility: TimeUtility, clickListener: (String) -> Unit){
+        fun bindItem(article: Article, timeUtility: TimeUtility, clickListener: (String?) -> Unit){
 
             Picasso
                     .get()
@@ -53,7 +53,7 @@ class ArticleRvAdapter(private val lifecycle: LifecycleOwner, private val articl
             binding.setVariable(BR.article,article)
             binding.executePendingBindings()
             binding.root.setOnClickListener{
-                clickListener(article.url)
+                clickListener(article?.url)
             }
         }
     }

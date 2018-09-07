@@ -40,9 +40,13 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        error { "oncreate" }
         initView()
         initRv()
         initObserver()
+
+        viewModel.restoreFromBundle(savedInstanceState)
+
 
     }
 
@@ -62,6 +66,10 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
                 }
             }
         })
+
+        viewModel.rvStateLD.observe(this, Observer {
+            recyclerView.layoutManager.onRestoreInstanceState(it)
+        })
     }
 
 
@@ -76,4 +84,15 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         ctx.startActivity<ArticleActivity>("id".to(id))
 
     }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        error { "onsaveinstance state" }
+
+        outState.putParcelable("liststate", recyclerView.layoutManager.onSaveInstanceState())
+        viewModel.saveToBundle(outState)
+    }
+
+
 }

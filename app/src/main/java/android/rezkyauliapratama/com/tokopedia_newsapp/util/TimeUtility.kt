@@ -13,14 +13,21 @@ class TimeUtility @Inject constructor(){
         return simpleDateFormat.format(date)
     }
 
-    fun getFriendlyDate(date: Date): String {
+    fun getFriendlyDate(date: Date?): String {
         val simpleDateFormat = SimpleDateFormat("dd MMM yy, HH:mm", Locale.getDefault())
-        return simpleDateFormat.format(date)
+        var result = ""
+
+        if (date != null) result = simpleDateFormat.format(date)
+
+        return result
     }
 
-    fun convertStringToDate(str: String): Date {
+    fun convertStringToDate(str: String ?): Date ?{
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.getDefault())
-        return format.parse(str)
+        var res : Date
+        if (str != null)
+            res = format.parse(str)
 
+        return null;
     }
 }

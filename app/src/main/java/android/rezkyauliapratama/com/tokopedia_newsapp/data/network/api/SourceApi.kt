@@ -1,10 +1,12 @@
 package android.rezkyauliapratama.com.tokopedia_newsapp.data.network.api
 
+import android.os.Parcelable
 import android.rezkyauliapratama.com.tokopedia_newsapp.data.datamodel.Source
 import android.rezkyauliapratama.com.tokopedia_newsapp.data.network.NewsUrl
 import com.google.gson.Gson
 import com.rezkyaulia.android.light_optimization_data.NetworkClient
 import io.reactivex.Single
+import kotlinx.android.parcel.Parcelize
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
 import javax.inject.Inject
@@ -46,8 +48,9 @@ class SourceApi @Inject constructor(private val networkClient: NetworkClient) : 
     }
 
 
-    data class SourcesResponse(
-            val status : String,
-            val sources : List<Source>
-    )
+    @Parcelize
+    data class SourcesResponse (
+            var status : String,
+            var sources : List<Source>
+    ) : Parcelable
 }
