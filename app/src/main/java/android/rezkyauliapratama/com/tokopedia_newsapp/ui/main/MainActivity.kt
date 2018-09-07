@@ -12,6 +12,7 @@ import android.rezkyauliapratama.com.tokopedia_newsapp.databinding.ActivityMainB
 import android.rezkyauliapratama.com.tokopedia_newsapp.ui.article.ArticleActivity
 import android.rezkyauliapratama.com.tokopedia_newsapp.ui.state.UiStatus
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.error
@@ -40,7 +41,6 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        error { "oncreate" }
         initView()
         initRv()
         initObserver()
@@ -61,6 +61,29 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
             when(it){
                 UiStatus.SHOW_LOADER -> swipeRefreshLayout.isRefreshing = true
                 UiStatus.HIDE_LOADER -> swipeRefreshLayout.isRefreshing = false
+                UiStatus.EMPTY -> {
+                    layout_status.visibility = View.VISIBLE
+                    lottieView.playAnimation()
+                    tv_status.text = "Sorry, cannot found the data"
+                }
+                UiStatus.NO_NETWORK -> {
+                    layout_status.visibility = View.VISIBLE
+
+                    lottieView.playAnimation()
+                    tv_status.text = "Sorry, please check your internet connection"
+
+                }
+                UiStatus.ERROR_LOAD -> {
+                    layout_status.visibility = View.VISIBLE
+
+                    lottieView.playAnimation()
+
+                    tv_status.text = "Apologies for the inconvenience, we will fix it"
+                }
+                UiStatus.HIDE_STATUS -> {
+                    layout_status.visibility = View.GONE
+                    tv_status.text = ""
+                }
                 else ->{
                     error { "cannot found any state Ui" }
                 }
@@ -74,21 +97,20 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
 
     private fun initRv() {
-        adapter = SourceRvAdapter(this,viewModel){ id: String -> eventClicked(id) }
+        adapter = SourceRvAdapter(this,viewModel){ id: String, name : String -> eventClicked(id, name) }
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
     }
 
-    private fun eventClicked(id: String) {
-        ctx.startActivity<ArticleActivity>("id".to(id))
+    private fun eventClicked(id: String, name : String) {
+        ctx.startActivity<ArticleActivity>("data".to(arrayOf(id,name)))
 
     }
 
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        error { "onsaveinstance state" }
 
         outState.putParcelable("liststate", recyclerView.layoutManager.onSaveInstanceState())
         viewModel.saveToBundle(outState)

@@ -3,23 +3,23 @@ package android.rezkyauliapratama.com.tokopedia_newsapp.ui.article
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.os.Parcelable
 import android.rezkyauliapratama.com.tokopedia_newsapp.BR
 import android.rezkyauliapratama.com.tokopedia_newsapp.R
 import android.rezkyauliapratama.com.tokopedia_newsapp.base.BaseActivity
 import android.rezkyauliapratama.com.tokopedia_newsapp.databinding.ActivityArticleBinding
 import android.rezkyauliapratama.com.tokopedia_newsapp.ui.detail.DetailActivity
 import android.rezkyauliapratama.com.tokopedia_newsapp.ui.state.UiStatus
+import android.rezkyauliapratama.com.tokopedia_newsapp.util.DimensionConverter
 import android.rezkyauliapratama.com.tokopedia_newsapp.util.TimeUtility
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.ViewGroup
+import android.view.MenuItem
+import android.view.View
 import android.view.WindowManager
 import kotlinx.android.synthetic.main.activity_article.*
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.error
-import org.jetbrains.anko.linearLayout
 import org.jetbrains.anko.startActivity
 import javax.inject.Inject
 
@@ -29,7 +29,7 @@ class ArticleActivity : BaseActivity<ActivityArticleBinding,ArticleViewModel>(){
     lateinit var timeUtility: TimeUtility
 
     private lateinit var adapter : ArticleRvAdapter
-    private lateinit var id : String
+    private lateinit var data : Array<String>
 
     override fun getLayoutId(): Int {
         return R.layout.activity_article
@@ -52,16 +52,30 @@ class ArticleActivity : BaseActivity<ActivityArticleBinding,ArticleViewModel>(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
 
-        id = intent.getStringExtra("id")
+        data = intent.getStringArrayExtra("data")
+        viewModel.restoreFromBundle(savedInstanceState,data.get(0))
 
-        viewModel.restoreFromBundle(savedInstanceState,id)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = data.get(1)
+
 
         initView()
         initRv()
         initObserver()
 
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.getItemId()) {
+            android.R.id.home -> {
+                // ProjectsActivity is my 'home' activity
+                finish()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onResume() {
@@ -72,11 +86,12 @@ class ArticleActivity : BaseActivity<ActivityArticleBinding,ArticleViewModel>(){
 
     private fun initView() {
         swipeRefreshLayout.setOnRefreshListener {
-            viewModel.retrieveData(id)
+            viewModel.retrieveData(data.get(0))
         }
 
         et_search.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
+
                 viewModel.search(s.toString())
             }
 
@@ -93,6 +108,25 @@ class ArticleActivity : BaseActivity<ActivityArticleBinding,ArticleViewModel>(){
             when(it){
                 UiStatus.SHOW_LOADER -> swipeRefreshLayout.isRefreshing = true
                 UiStatus.HIDE_LOADER -> swipeRefreshLayout.isRefreshing = false
+                UiStatus.EMPTY -> {
+                    layout_status.visibility = View.VISIBLE
+                    lottieView.playAnimation()
+                    tv_status.text = "Sorry, cannot found the data"
+                }
+                UiStatus.NO_NETWORK -> {
+                    layout_status.visibility = View.VISIBLE
+                    lottieView.playAnimation()
+                    tv_status.text = "Sorry, please check your internet connection"
+                }
+                UiStatus.ERROR_LOAD -> {
+                    layout_status.visibility = View.VISIBLE
+                    lottieView.playAnimation()
+                    tv_status.text = "Apologies for the inconvenience, we will fix it"
+                }
+                UiStatus.HIDE_STATUS -> {
+                    layout_status.visibility = View.GONE
+                    tv_status.text = ""
+                }
                 else ->{
                     error { "cannot found any state Ui" }
                 }
@@ -110,19 +144,20 @@ class ArticleActivity : BaseActivity<ActivityArticleBinding,ArticleViewModel>(){
 
 
     private fun initRv() {
-        adapter = ArticleRvAdapter(this,viewModel,timeUtility){ id: String? -> eventClicked(id) }
+        val width = DimensionConverter.instance?.stringToDimension("96dp", resources.getDisplayMetrics())?.toInt()
+
+        adapter = ArticleRvAdapter(this,viewModel,width){ id: String?, title: String -> eventClicked(id, title) }
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
     }
 
-    private fun eventClicked(url: String?) {
-        ctx.startActivity<DetailActivity>("url".to(url))
+    private fun eventClicked(url: String?, title : String) {
+        ctx.startActivity<DetailActivity>("data".to(arrayOf(url,title)))
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        error { "onSaveInstanceState" }
         val listState =  recyclerView.layoutManager.onSaveInstanceState();
         outState.putParcelable("liststate", listState);
         viewModel.saveToBundle(outState)

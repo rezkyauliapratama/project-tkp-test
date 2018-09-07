@@ -8,12 +8,9 @@
         type="android.rezkyauliapratama.com.tokopedia_newsapp.ui.detail.DetailViewModel" />
     </data>
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-        android:layout_height="match_parent" android:paddingLeft="@dimen/margin_normal"
-        android:paddingRight="@dimen/margin_normal"
-        android:paddingTop="@dimen/margin_normal"
-        android:paddingBottom="@dimen/margin_normal">
+        android:layout_height="match_parent">
 
         <WebView
             android:id="@+id/webView"
@@ -21,5 +18,12 @@
             android:layout_alignParentLeft="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-    </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            />
+    </FrameLayout>
 </layout>

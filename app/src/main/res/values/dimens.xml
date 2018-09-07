@@ -3,7 +3,10 @@
 
     <dimen name="margin_small">6dp</dimen>
     <dimen name="margin_normal">12dp</dimen>
+    <dimen name="margin_large">12dp</dimen>
+    <dimen name="margin_xlarge">16dp</dimen>
 
+    <dimen name="img_width_height">120dp</dimen>
     <dimen name="width_image_list_article">92dp</dimen>
     <dimen name="height_image_list_article">69dp</dimen>
 </resources>

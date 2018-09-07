@@ -49,15 +49,32 @@ class ArticleViewModel @Inject constructor(val apiRepository: ApiRepository, val
                             return@Function apiRepository.article.getAllArticles(sourceStr,it)
 
                         })
+                        .map { it ->
+                            for (article: Article in it.articles){
+                                timeUtility.run { convertStringToDate(article.publishedAt).also { article.publishedAt = getFriendlyDate(it) } }
+                            }
+                            it
+                        }
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ response ->
-                            articleResponseLD.value = response.articles
-                                    .also {
-                                        uiStatusLD.value = UiStatus.HIDE_LOADER
-                                    }
+                            if (response != null){
+                                articleResponseLD.value = response.articles
+                                        .also {
+                                            uiStatusLD.value = UiStatus.HIDE_LOADER
+                                        }
+                            }else{
+                                uiStatusLD.value = UiStatus.EMPTY
+                            }
+
                         }, { throwable ->
                             uiStatusLD.value = UiStatus.HIDE_LOADER
+
+                            if (throwable.localizedMessage.toLowerCase().contains("connection")){
+                                uiStatusLD.value =UiStatus.NO_NETWORK
+                            }else{
+                                uiStatusLD.value =UiStatus.ERROR_LOAD
+                            }
                             error { "error : "+ Gson().toJson(throwable) }
                         })
 
@@ -78,12 +95,25 @@ class ArticleViewModel @Inject constructor(val apiRepository: ApiRepository, val
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ response ->
-                    articleResponseLD.value = response.articles
-                            .also {
-                                uiStatusLD.value = UiStatus.HIDE_LOADER
-                            }
+                    if (response != null){
+                        articleResponseLD.value = response.articles
+                                .also {
+                                    uiStatusLD.value = UiStatus.HIDE_STATUS
+
+                                    uiStatusLD.value = UiStatus.HIDE_LOADER
+                                }
+                    }else{
+                        uiStatusLD.value = UiStatus.EMPTY
+                    }
+
                 }, { throwable ->
                     uiStatusLD.value = UiStatus.HIDE_LOADER
+
+                    if (throwable.localizedMessage.toLowerCase().contains("connection")){
+                        uiStatusLD.value =UiStatus.NO_NETWORK
+                    }else{
+                        uiStatusLD.value =UiStatus.ERROR_LOAD
+                    }
                     error { "error retrieve : "+ Gson().toJson(throwable) }
                 }))
 
@@ -105,27 +135,21 @@ class ArticleViewModel @Inject constructor(val apiRepository: ApiRepository, val
         if (articleResponseLD.value != null) {
             error { "put parcelable" }
 
-            outState.putParcelableArrayList(ARG1,  ArrayList(articleResponseLD.value))
-            outState.putString(ARG2,  query)
+            outState.putString(ARG1,  query)
         }
     }
 
     fun restoreFromBundle(savedInstanceState: Bundle?, source : String) {
+
         error { "restore from bundle" }
         this.sourceStr = source
         if (savedInstanceState != null){
             if (articleResponseLD.value == null) {
                 error { "articleResponseLD.value == null" }
-                if(savedInstanceState.containsKey(ARG1) && savedInstanceState.containsKey(ARG2) && savedInstanceState.containsKey("liststate")){
-                    val articles   = savedInstanceState.getParcelableArrayList<Article>(ARG1)
-                    query = savedInstanceState.getString(ARG2)
-
-                    error { "restore : "+ Gson().toJson(articles.toList()) }
-
-                    articleResponseLD.value = articles
+                if(savedInstanceState.containsKey(ARG1) && savedInstanceState.containsKey("liststate")){
+                    query = savedInstanceState.getString(ARG1)
                     queryLD.value = query
                     rvStateLD.value = savedInstanceState.getParcelable("liststate")
-
                 }
             }
         }else{

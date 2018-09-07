@@ -102,10 +102,14 @@ dependencies {
     androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
 
     //networking
-    implementation "com.rezkyaulia.library:light-networking:$rootProject.networkVersion"
+    implementation "com.rezkyaulia.library:light-networking:0.1"
     implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
 
+    //log
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
+
+    //animation
+    implementation "com.airbnb.android:lottie:$rootProject.lottieVersion"
 
     //mockito
     testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"

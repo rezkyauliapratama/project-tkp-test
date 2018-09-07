@@ -11,7 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-class SourceRvAdapter(private val lifecycle:LifecycleOwner,private val mainViewModel: MainViewModel, private val clickListener : (String) -> Unit) : RecyclerView.Adapter<SourceRvAdapter.ViewHolder>() {
+class SourceRvAdapter(private val lifecycle:LifecycleOwner,private val mainViewModel: MainViewModel, private val clickListener : (String,String) -> Unit) : RecyclerView.Adapter<SourceRvAdapter.ViewHolder>() {
 
     val listItem : MutableList<Source> = mutableListOf()
 
@@ -42,11 +42,11 @@ class SourceRvAdapter(private val lifecycle:LifecycleOwner,private val mainViewM
     class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         private var binding:ListItemSourceBinding = ListItemSourceBinding.bind(itemView)
 
-        fun bindItem(source: Source, clickListener: (String) -> Unit){
+        fun bindItem(source: Source, clickListener: (String,String) -> Unit){
             binding.setVariable(BR.source,source)
             binding.executePendingBindings()
             binding.root.setOnClickListener{
-                clickListener(source.url.run { if(startsWith("www.")) substring(4) else this })
+                clickListener(source.url.run { if(startsWith("www.")) substring(4) else this },source.name)
             }
         }
     }

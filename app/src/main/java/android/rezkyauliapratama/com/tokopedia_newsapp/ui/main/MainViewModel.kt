@@ -10,14 +10,10 @@ import android.rezkyauliapratama.com.tokopedia_newsapp.data.network.api.SourceAp
 import android.rezkyauliapratama.com.tokopedia_newsapp.ui.state.UiStatus
 import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.error
 import java.util.regex.Pattern
 import javax.inject.Inject
-import android.provider.ContactsContract.CommonDataKinds.Note
-import io.reactivex.internal.util.NotificationLite.disposable
-
 
 
 class MainViewModel @Inject constructor(val apiRepository: ApiRepository) : BaseViewModel(){
@@ -30,8 +26,7 @@ class MainViewModel @Inject constructor(val apiRepository: ApiRepository) : Base
 
 
     fun retrieveData() {
-
-
+        uiStatusLD.value = UiStatus.HIDE_STATUS
         uiStatusLD.value = UiStatus.SHOW_LOADER
         compositeDisposable.add(apiRepository.source
                 .getAll().subscribeOn(Schedulers.io())
@@ -50,36 +45,45 @@ class MainViewModel @Inject constructor(val apiRepository: ApiRepository) : Base
                     response
                 }
                 .subscribe({ response ->
-                    response
-                            .also {
-                                uiStatusLD.value = UiStatus.HIDE_LOADER
-                                error { Gson().toJson(it) }
-                            }
-                            ?.let { sourceResponseLD.value = it }
+                    if (response != null){
+                        response
+                                .also {
+                                    uiStatusLD.value = UiStatus.HIDE_LOADER
+                                    sourceResponseLD.value = it
+                                }
+                    }else{
+                        uiStatusLD.value = UiStatus.EMPTY
+                    }
+
+
                 }, { throwable ->
                     uiStatusLD.value = UiStatus.HIDE_LOADER
-                    error { "error : "+ Gson().toJson(throwable) }
+
+                    if (throwable.localizedMessage.toLowerCase().contains("connection")){
+                        uiStatusLD.value =UiStatus.NO_NETWORK
+                    }else{
+                        uiStatusLD.value =UiStatus.ERROR_LOAD
+                    }
                 }))
 
     }
 
     fun saveToBundle(outState: Bundle) {
         if (sourceResponseLD.value != null) {
-            error { "put parcelable" }
             outState.putParcelable(ARG1, sourceResponseLD.value)
         }
     }
 
     fun restoreFromBundle(savedInstanceState: Bundle?) {
-        error { "restore from bundle" }
         if (savedInstanceState != null){
             if (sourceResponseLD.value == null) {
-                error { "sourceResponseLD.value == null" }
                 if(savedInstanceState.containsKey(ARG1) && savedInstanceState.containsKey("liststate")){
                     val sources : SourceApi.SourcesResponse = savedInstanceState.getParcelable(ARG1)
-                    error { "restore : "+ Gson().toJson(sources) }
+
                     sourceResponseLD.value = sources
                     rvStateLD.value = savedInstanceState.getParcelable("liststate")
+                }else{
+                   uiStatusLD.value = UiStatus.EMPTY
                 }
             }
         }else{
