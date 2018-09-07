@@ -66,6 +66,10 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
                 }
             }
         })
+
+        viewModel.rvStateLD.observe(this, Observer {
+            recyclerView.layoutManager.onRestoreInstanceState(it)
+        })
     }
 
 
@@ -85,6 +89,8 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         error { "onsaveinstance state" }
+
+        outState.putParcelable("liststate", recyclerView.layoutManager.onSaveInstanceState())
         viewModel.saveToBundle(outState)
     }
 

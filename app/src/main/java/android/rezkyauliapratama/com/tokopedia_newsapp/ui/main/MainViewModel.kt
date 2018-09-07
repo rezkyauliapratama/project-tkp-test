@@ -2,6 +2,7 @@ package android.rezkyauliapratama.com.tokopedia_newsapp.ui.main
 
 import android.arch.lifecycle.MutableLiveData
 import android.os.Bundle
+import android.os.Parcelable
 import android.rezkyauliapratama.com.tokopedia_newsapp.base.BaseViewModel
 import android.rezkyauliapratama.com.tokopedia_newsapp.data.datamodel.Source
 import android.rezkyauliapratama.com.tokopedia_newsapp.data.network.ApiRepository
@@ -22,9 +23,9 @@ import io.reactivex.internal.util.NotificationLite.disposable
 class MainViewModel @Inject constructor(val apiRepository: ApiRepository) : BaseViewModel(){
 
     val ARG1 : String = "ARG1"
-    val ARG2 : String = "ARG2"
 
     val sourceResponseLD: MutableLiveData<SourceApi.SourcesResponse> = MutableLiveData()
+    val rvStateLD: MutableLiveData<Parcelable> = MutableLiveData()
     val uiStatusLD: MutableLiveData<UiStatus> = MutableLiveData()
 
 
@@ -74,10 +75,11 @@ class MainViewModel @Inject constructor(val apiRepository: ApiRepository) : Base
         if (savedInstanceState != null){
             if (sourceResponseLD.value == null) {
                 error { "sourceResponseLD.value == null" }
-                if(savedInstanceState.containsKey(ARG1)){
+                if(savedInstanceState.containsKey(ARG1) && savedInstanceState.containsKey("liststate")){
                     val sources : SourceApi.SourcesResponse = savedInstanceState.getParcelable(ARG1)
                     error { "restore : "+ Gson().toJson(sources) }
                     sourceResponseLD.value = sources
+                    rvStateLD.value = savedInstanceState.getParcelable("liststate")
                 }
             }
         }else{
