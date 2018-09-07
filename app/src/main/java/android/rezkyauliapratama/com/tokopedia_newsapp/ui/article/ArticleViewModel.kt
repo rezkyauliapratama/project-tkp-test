@@ -7,23 +7,62 @@ import android.rezkyauliapratama.com.tokopedia_newsapp.data.network.ApiRepositor
 import android.rezkyauliapratama.com.tokopedia_newsapp.data.network.api.ArticleApi
 import android.rezkyauliapratama.com.tokopedia_newsapp.ui.state.UiStatus
 import android.rezkyauliapratama.com.tokopedia_newsapp.util.TimeUtility
+import android.text.Editable
 import com.google.gson.Gson
+import io.reactivex.ObservableSource
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Function
+import io.reactivex.functions.Predicate
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
+import org.jetbrains.anko.error
+import timber.log.Timber
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ArticleViewModel @Inject constructor(val apiRepository: ApiRepository, val timeUtility: TimeUtility) : BaseViewModel(){
-    val articleResponseLD: MutableLiveData<ArticleApi.ArticleResponse> = MutableLiveData()
+    val articleResponseLD: MutableLiveData<List<Article>> = MutableLiveData()
     val uiStatusLD: MutableLiveData<UiStatus> = MutableLiveData()
 
+    val subject = PublishSubject.create<String>()
+    lateinit var source: String
 
+
+    init {
+        compositeDisposable.add(
+                subject.
+                        debounce(300, TimeUnit.MILLISECONDS)
+                        .filter(Predicate { it: String ->
+                            return@Predicate it.isNotEmpty()
+                        })
+                        .distinctUntilChanged()
+                        .switchMap(Function<String, ObservableSource<ArticleApi.ArticleResponse>> { it ->
+                            return@Function apiRepository.article.getAllArticles(source,it)
+
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ response ->
+                            articleResponseLD.value = response.articles
+                                    .also {
+                                        uiStatusLD.value = UiStatus.HIDE_LOADER
+                                    }
+                        }, { throwable ->
+                            uiStatusLD.value = UiStatus.HIDE_LOADER
+                            error { "error : "+ Gson().toJson(throwable) }
+                        })
+
+        )
+    }
     fun retrieveData(source : String) {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.DAY_OF_YEAR,-1)
+
+        this.source = source
+
         uiStatusLD.value = UiStatus.SHOW_LOADER
         compositeDisposable.add(apiRepository.article
-                .getAllArticles(source, calendar.time).subscribeOn(Schedulers.io())
+                .getAllArticles(source).subscribeOn(Schedulers.io())
                 .map { it ->
                     for (article: Article in it.articles){
                         timeUtility.run { convertStringToDate(article.publishedAt).also { article.publishedAt = getFriendlyDate(it) } }
@@ -32,14 +71,27 @@ class ArticleViewModel @Inject constructor(val apiRepository: ApiRepository, val
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ response ->
-                    articleResponseLD.value = response
+                    articleResponseLD.value = response.articles
                             .also {
                                 uiStatusLD.value = UiStatus.HIDE_LOADER
                             }
                 }, { throwable ->
                     uiStatusLD.value = UiStatus.HIDE_LOADER
-                    error { "error : "+ Gson().toJson(throwable) }
+                    error { "error retrieve : "+ Gson().toJson(throwable) }
                 }))
 
     }
+
+
+    fun search(s: String) {
+        if (s.isEmpty()){
+            retrieveData(source)
+        }else{
+            uiStatusLD.value = UiStatus.SHOW_LOADER
+            subject.onNext(s)
+        }
+
+    }
+
+
 }

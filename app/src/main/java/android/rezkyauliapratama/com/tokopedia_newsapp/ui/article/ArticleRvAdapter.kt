@@ -21,11 +21,7 @@ class ArticleRvAdapter(private val lifecycle: LifecycleOwner, private val articl
     init {
         articleViewModel.articleResponseLD.observe(lifecycle, Observer {
             listItem.clear()
-            if (it != null) {
-                if (it.status.equals("ok") ){
-                    listItem.addAll(it.articles)
-                }
-            }
+            it?.apply { listItem.addAll(this) }
             notifyDataSetChanged()
         })
     }

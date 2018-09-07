@@ -5,6 +5,7 @@ import android.rezkyauliapratama.com.tokopedia_newsapp.di.application.Applicatio
 import android.rezkyauliapratama.com.tokopedia_newsapp.di.application.ApplicationModule
 import android.rezkyauliapratama.com.tokopedia_newsapp.di.application.DaggerApplicationComponent
 import android.rezkyauliapratama.com.tokopedia_newsapp.di.application.NetworkModule
+import com.app.infideap.stylishwidget.view.Stylish
 
 class BaseApplication : Application() {
 
@@ -13,6 +14,15 @@ class BaseApplication : Application() {
     }
     override fun onCreate() {
         super.onCreate()
+
+        val fontFolder = "fonts/Exo_2/Exo2-"
+        Stylish.getInstance().set(
+                fontFolder + "Regular.ttf",
+                fontFolder + "Medium.ttf",
+                fontFolder + "Italic.ttf",
+                fontFolder + "MediumItalic.ttf"
+        )
+
         component = initDagger(this)
         component.inject(this)
     }
