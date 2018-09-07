@@ -15,7 +15,10 @@ class BaseApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        //inisialisasi font folder
         val fontFolder = "fonts/Exo_2/Exo2-"
+
+        //set font kedalam library view
         Stylish.getInstance().set(
                 fontFolder + "Regular.ttf",
                 fontFolder + "Medium.ttf",
@@ -26,6 +29,7 @@ class BaseApplication : Application() {
         component = initDagger(this)
         component.inject(this)
     }
+
 
     private fun initDagger(app: BaseApplication): ApplicationComponent =
             DaggerApplicationComponent.builder()

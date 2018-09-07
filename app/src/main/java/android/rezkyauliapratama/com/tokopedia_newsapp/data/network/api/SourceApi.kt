@@ -16,11 +16,11 @@ class SourceApi @Inject constructor(private val networkClient: NetworkClient) : 
 
     val TAG : String  = SourceApi::class.java.simpleName
 
+    //public function yang digunakan oleh aplikasi untuk mengekseksu method api retrieveAllSources
     fun getAll(): Single<SourcesResponse> {
         return Single.create<SourcesResponse> { emitter ->
             try {
                 retrieveAllSources()
-                        .also { Gson().toJson(it) }
                         .apply { emitter.onSuccess(this) }
 
             } catch (e: Exception) {
@@ -29,6 +29,7 @@ class SourceApi @Inject constructor(private val networkClient: NetworkClient) : 
         }
     }
 
+    //function untuk mengambil data source dari api
     private fun retrieveAllSources() : SourcesResponse
     {
 

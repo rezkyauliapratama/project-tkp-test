@@ -64,21 +64,17 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
                 UiStatus.EMPTY -> {
                     layout_status.visibility = View.VISIBLE
                     lottieView.playAnimation()
-                    tv_status.text = "Sorry, cannot found the data"
+                    tv_status.text = getString(R.string.sorrycannotfounddata)
                 }
                 UiStatus.NO_NETWORK -> {
                     layout_status.visibility = View.VISIBLE
-
                     lottieView.playAnimation()
-                    tv_status.text = "Sorry, please check your internet connection"
-
+                    tv_status.text = getString(R.string.sorrypleasecheckyourinternet)
                 }
                 UiStatus.ERROR_LOAD -> {
                     layout_status.visibility = View.VISIBLE
-
                     lottieView.playAnimation()
-
-                    tv_status.text = "Apologies for the inconvenience, we will fix it"
+                    tv_status.text = getString(R.string.apologiesfortheinconvenience)
                 }
                 UiStatus.HIDE_STATUS -> {
                     layout_status.visibility = View.GONE

@@ -4,5 +4,8 @@
     <string name="format_language">Language : %s</string>
     <string name="format_author">Author : %s</string>
     <string name="picture_articles">picture articles</string>
+    <string name="sorrycannotfounddata">Sorry, cannot found the data</string>
+    <string name="sorrypleasecheckyourinternet">Sorry, please check your internet connection</string>
+    <string name="apologiesfortheinconvenience">Apologies for the inconvenience, we will fix it</string>
 
 </resources>

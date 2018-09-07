@@ -12,10 +12,11 @@ import org.jetbrains.anko.error
 import java.util.*
 import javax.inject.Inject
 
-class ArticleApi @Inject constructor(private val networkClient: NetworkClient, private val timeUtility: TimeUtility) : AnkoLogger{
+class ArticleApi @Inject constructor(private val networkClient: NetworkClient) : AnkoLogger{
     val TAG : String  = ArticleApi::class.java.simpleName
 
 
+    //public function yang digunakan aplikasi untuk mengambil data articles dari API dengan cara menjalankan getAllArticles
     fun getAllArticles(source: String) : Single<ArticleResponse>{
         return Single.create<ArticleResponse> { emitter ->
             try {
@@ -30,6 +31,7 @@ class ArticleApi @Inject constructor(private val networkClient: NetworkClient, p
 
     }
 
+    //public function yang digunakan aplikasi untuk mengambil data articles dari API dengan cara menjalankan getAllArticles
     fun getAllArticles(source: String, q : String) : ObservableSource<ArticleResponse>{
         return ObservableSource {
             emitter ->
@@ -45,6 +47,7 @@ class ArticleApi @Inject constructor(private val networkClient: NetworkClient, p
 
     }
 
+    //function untuk mengambil data article dari api
     private fun retrieveAllArticles(source : String) : ArticleResponse
     {
         try
@@ -62,6 +65,7 @@ class ArticleApi @Inject constructor(private val networkClient: NetworkClient, p
 
     }
 
+    //function untuk mengambil data article dari api
     private fun retrieveAllArticles(source : String, q : String) : ArticleResponse
     {
         try

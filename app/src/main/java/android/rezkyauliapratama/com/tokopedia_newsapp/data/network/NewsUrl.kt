@@ -7,6 +7,7 @@ import org.jetbrains.anko.AnkoLogger
 import java.util.*
 import javax.inject.Inject
 
+//class yang berisi url untuk API
 object NewsUrl : AnkoLogger {
 
 

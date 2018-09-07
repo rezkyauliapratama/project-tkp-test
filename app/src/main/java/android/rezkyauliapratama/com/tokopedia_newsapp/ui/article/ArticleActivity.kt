@@ -111,17 +111,17 @@ class ArticleActivity : BaseActivity<ActivityArticleBinding,ArticleViewModel>(){
                 UiStatus.EMPTY -> {
                     layout_status.visibility = View.VISIBLE
                     lottieView.playAnimation()
-                    tv_status.text = "Sorry, cannot found the data"
+                    tv_status.text = getString(R.string.sorrycannotfounddata)
                 }
                 UiStatus.NO_NETWORK -> {
                     layout_status.visibility = View.VISIBLE
                     lottieView.playAnimation()
-                    tv_status.text = "Sorry, please check your internet connection"
+                    tv_status.text = getString(R.string.sorrypleasecheckyourinternet)
                 }
                 UiStatus.ERROR_LOAD -> {
                     layout_status.visibility = View.VISIBLE
                     lottieView.playAnimation()
-                    tv_status.text = "Apologies for the inconvenience, we will fix it"
+                    tv_status.text = getString(R.string.apologiesfortheinconvenience)
                 }
                 UiStatus.HIDE_STATUS -> {
                     layout_status.visibility = View.GONE
@@ -144,6 +144,7 @@ class ArticleActivity : BaseActivity<ActivityArticleBinding,ArticleViewModel>(){
 
 
     private fun initRv() {
+        //konversi nilai 96dp ke dalam float, nilai ini akan digunakan untuk mengeset width dari imageview di list item
         val width = DimensionConverter.instance?.stringToDimension("96dp", resources.getDisplayMetrics())?.toInt()
 
         adapter = ArticleRvAdapter(this,viewModel,width){ id: String?, title: String -> eventClicked(id, title) }
