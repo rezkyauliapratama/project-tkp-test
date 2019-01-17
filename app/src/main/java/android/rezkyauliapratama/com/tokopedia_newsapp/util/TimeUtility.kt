@@ -26,8 +26,8 @@ class TimeUtility @Inject constructor(){
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.getDefault())
         var res : Date
         if (str != null)
-            res = format.parse(str)
+            format.parse(str)
 
-        return null;
+        return null
     }
 }

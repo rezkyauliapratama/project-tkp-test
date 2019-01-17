@@ -15,6 +15,7 @@ abstract class BaseViewModel : ViewModel(), AnkoLogger {
 
     override fun onCleared() {
         super.onCleared()
+        error { "oncleared" }
         compositeDisposable.clear()
     }
 }

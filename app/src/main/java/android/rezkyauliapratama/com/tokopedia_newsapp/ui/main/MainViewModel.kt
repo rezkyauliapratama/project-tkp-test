@@ -24,6 +24,9 @@ class MainViewModel @Inject constructor(val apiRepository: ApiRepository) : Base
     val rvStateLD: MutableLiveData<Parcelable> = MutableLiveData()
     val uiStatusLD: MutableLiveData<UiStatus> = MutableLiveData()
 
+    init {
+        error { "init" }
+    }
 
     fun retrieveData() {
         uiStatusLD.value = UiStatus.HIDE_STATUS
@@ -75,10 +78,16 @@ class MainViewModel @Inject constructor(val apiRepository: ApiRepository) : Base
     }
 
     fun restoreFromBundle(savedInstanceState: Bundle?) {
+        error { "restoreFromBUndle" }
         if (savedInstanceState != null){
+            error { "savedInstanceState != null" }
+
             if (sourceResponseLD.value == null) {
+                error { "sourceResponseLD.value == null" }
+
                 if(savedInstanceState.containsKey(ARG1) && savedInstanceState.containsKey("liststate")){
                     val sources : SourceApi.SourcesResponse = savedInstanceState.getParcelable(ARG1)
+                    error { "sources != null" }
 
                     sourceResponseLD.value = sources
                     rvStateLD.value = savedInstanceState.getParcelable("liststate")
